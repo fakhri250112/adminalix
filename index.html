@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - OSIS MPK Al Ikhlas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #f0fdf4, #dcfce7);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .admin-container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 1000px;
+      display: none;
+    }
+
+    h1 {
+      color: #3E9946;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      color: #065f46;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    h3 {
+      color: #3E9946;
+      margin: 25px 0 15px;
+      border-bottom: 2px solid #f0fdf4;
+      padding-bottom: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #065f46;
+      font-weight: 500;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: #3E9946;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      background: linear-gradient(to right, #3E9946, #065f46);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .logout-btn {
+      background: #dc3545;
+      margin-top: 20px;
+    }
+
+    .tab-container {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #f0fdf4;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      cursor: pointer;
+      background: #f0fdf4;
+      margin-right: 5px;
+      border-radius: 5px 5px 0 0;
+      font-weight: 500;
+    }
+
+    .tab.active {
+      background: #3E9946;
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .proker-list, .galeri-list {
+      margin-top: 20px;
+    }
+
+    .proker-item, .galeri-item {
+      background: #f0fdf4;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border-left: 4px solid #3E9946;
+      position: relative;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .delete-btn:hover {
+      background: #c82333;
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .alert.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .date-display {
+      color: #047857;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .countdown-display {
+      color: #3E9946;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    .galeri-image {
+      max-width: 200px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 20px;
+      color: #6c757d;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Form -->
+  <div class="login-container" id="loginContainer">
+    <h1><i class="fas fa-lock"></i> Admin Login</h1>
+    <p>Masukkan password untuk mengakses panel admin</p>
+    
+    <div class="form-group">
+      <input type="password" id="password" placeholder="Masukkan password">
+    </div>
+    
+    <button onclick="login()">Masuk</button>
+    
+    <div class="alert error" id="loginError">Password salah!</div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div class="admin-container" id="adminContainer">
+    <h1>Panel Admin OSIS MPK</h1>
+    <p>Kelola program kerja dan galeri foto</p>
+    
+    <div class="tab-container">
+      <div class="tab active" onclick="switchTab('proker')">Program Kerja</div>
+      <div class="tab" onclick="switchTab('galeri')">Galeri Foto</div>
+    </div>
+    
+    <div class="alert success" id="successAlert">Data berhasil disimpan!</div>
+    <div class="alert error" id="errorAlert">Terjadi kesalahan!</div>
+    
+    <!-- Proker Tab -->
+    <div class="tab-content active" id="prokerTab">
+      <h2>Tambah Program Kerja Baru</h2>
+      
+      <div class="form-group">
+        <label>Judul Program</label>
+        <input type="text" id="prokerJudul" placeholder="Contoh: Bakti Sosial">
+      </div>
+      
+      <div class="form-group">
+        <label>Deskripsi</label>
+        <textarea id="prokerDeskripsi" placeholder="Jelaskan detail program kerja"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>Tanggal & Waktu Pelaksanaan</label>
+        <input type="datetime-local" id="prokerTanggal">
+      </div>
+      
+      <div class="form-group">
+        <label>Icon (Font Awesome)</label>
+        <input type="text" id="prokerIcon" placeholder="Contoh: fas fa-hands-helping">
+        <small>Lihat daftar icon di <a href="https://fontawesome.com/icons" target="_blank">Font Awesome</a></small>
+      </div>
+      
+      <button onclick="tambahProker()">Tambah Program Kerja</button>
+      
+      <h3>Daftar Program Kerja</h3>
+      <div class="proker-list" id="prokerList">
+        <!-- Daftar proker akan dimuat di sini -->
+      </div>
+    </div>
+    
+    <!-- Galeri Tab -->
+    <div class="tab-content" id="galeriTab">
+      <h2>Tambah Foto ke Galeri</h2>
+      
+      <div class="form-group">
+        <label>Judul Foto</label>
+        <input type="text" id="galeriJudul" placeholder="Contoh: Kegiatan OSIS 2024">
+      </div>
+      
+      <div class="form-group">
+        <label>Deskripsi</label>
+        <textarea id="galeriDeskripsi" placeholder="Jelaskan kegiatan dalam foto"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>Kategori</label>
+        <select id="galeriKategori">
+          <option value="osis">OSIS</option>
+          <option value="mpk">MPK</option>
+          <option value="sekolah">Sekolah</option>
+          <option value="lainnya">Lainnya</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Upload Foto</label>
+        <input type="file" id="galeriFoto" accept="image/*">
+      </div>
+      
+      <button onclick="tambahGaleri()">Tambah ke Galeri</button>
+      
+      <h3>Daftar Foto Galeri</h3>
+      <div class="galeri-list" id="galeriList">
+        <!-- Daftar galeri akan dimuat di sini -->
+      </div>
+    </div>
+    
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    // Password untuk login (ganti dengan password yang lebih kuat)
+    const ADMIN_PASSWORD = "osis2024";
+    
+    // Fungsi login
+    function login() {
+      const password = document.getElementById('password').value;
+      if (password === ADMIN_PASSWORD) {
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('adminContainer').style.display = 'block';
+        loadData();
+      } else {
+        document.getElementById('loginError').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('loginError').style.display = 'none';
+        }, 3000);
+      }
+    }
+    
+    // Fungsi logout
+    function logout() {
+      document.getElementById('loginContainer').style.display = 'flex';
+      document.getElementById('adminContainer').style.display = 'none';
+      document.getElementById('password').value = '';
+    }
+    
+    // Switch tab
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      document.querySelector(`.tab:nth-child(${tabName === 'proker' ? 1 : 2})`).classList.add('active');
+      document.getElementById(tabName + 'Tab').classList.add('active');
+    }
+    
+    // Tambah proker
+    function tambahProker() {
+      const judul = document.getElementById('prokerJudul').value;
+      const deskripsi = document.getElementById('prokerDeskripsi').value;
+      const tanggal = document.getElementById('prokerTanggal').value;
+      const icon = document.getElementById('prokerIcon').value;
+      
+      if (!judul || !deskripsi || !tanggal || !icon) {
+        showAlert('error', 'Semua field harus diisi!');
+        return;
+      }
+      
+      const prokers = JSON.parse(localStorage.getItem('prokers')) || [];
+      const newProker = {
+        id: Date.now(),
+        judul,
+        deskripsi,
+        tanggal,
+        icon,
+        status: 'active'
+      };
+      
+      prokers.push(newProker);
+      localStorage.setItem('prokers', JSON.stringify(prokers));
+      
+      // Reset form
+      document.getElementById('prokerJudul').value = '';
+      document.getElementById('prokerDeskripsi').value = '';
+      document.getElementById('prokerTanggal').value = '';
+      document.getElementById('prokerIcon').value = '';
+      
+      showAlert('success', 'Program kerja berhasil ditambahkan!');
+      loadProkers();
+    }
+    
+    // Hapus proker
+    function hapusProker(id) {
+      if (confirm('Apakah Anda yakin ingin menghapus program kerja ini?')) {
+        let prokers = JSON.parse(localStorage.getItem('prokers')) || [];
+        prokers = prokers.filter(proker => proker.id !== id);
+        localStorage.setItem('prokers', JSON.stringify(prokers));
+        
+        showAlert('success', 'Program kerja berhasil dihapus!');
+        loadProkers();
+      }
+    }
+    
+    // Tambah galeri
+    function tambahGaleri() {
+      const judul = document.getElementById('galeriJudul').value;
+      const deskripsi = document.getElementById('galeriDeskripsi').value;
+      const kategori = document.getElementById('galeriKategori').value;
+      const fileInput = document.getElementById('galeriFoto');
+      
+      if (!judul || !deskripsi || !fileInput.files[0]) {
+        showAlert('error', 'Judul, deskripsi, dan foto harus diisi!');
+        return;
+      }
+      
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        const galeri = JSON.parse(localStorage.getItem('galeri')) || [];
+        const newGaleri = {
+          id: Date.now(),
+          judul,
+          deskripsi,
+          kategori,
+          gambar: e.target.result, // Simpan sebagai base64
+          tanggal: new Date().toISOString()
+        };
+        
+        galeri.push(newGaleri);
+        localStorage.setItem('galeri', JSON.stringify(galeri));
+        
+        // Reset form
+        document.getElementById('galeriJudul').value = '';
+        document.getElementById('galeriDeskripsi').value = '';
+        document.getElementById('galeriFoto').value = '';
+        
+        showAlert('success', 'Foto berhasil ditambahkan ke galeri!');
+        loadGaleri();
+      };
+      
+      reader.readAsDataURL(file);
+    }
+    
+    // Hapus galeri
+    function hapusGaleri(id) {
+      if (confirm('Apakah Anda yakin ingin menghapus foto ini dari galeri?')) {
+        let galeri = JSON.parse(localStorage.getItem('galeri')) || [];
+        galeri = galeri.filter(item => item.id !== id);
+        localStorage.setItem('galeri', JSON.stringify(galeri));
+        
+        showAlert('success', 'Foto berhasil dihapus dari galeri!');
+        loadGaleri();
+      }
+    }
+    
+    // Load data
+    function loadData() {
+      loadProkers();
+      loadGaleri();
+    }
+    
+    // Load prokers
+    function loadProkers() {
+      const prokers = JSON.parse(localStorage.getItem('prokers')) || [];
+      const prokerList = document.getElementById('prokerList');
+      
+      prokerList.innerHTML = '';
+      
+      if (prokers.length === 0) {
+        prokerList.innerHTML = '<div class="empty-state">Belum ada program kerja.</div>';
+        return;
+      }
+      
+      prokers.forEach(proker => {
+        const tanggal = new Date(proker.tanggal);
+        const now = new Date();
+        const diffTime = tanggal - now;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        const prokerItem = document.createElement('div');
+        prokerItem.className = 'proker-item';
+        prokerItem.innerHTML = `
+          <button class="delete-btn" onclick="hapusProker(${proker.id})">
+            <i class="fas fa-trash"></i> Hapus
+          </button>
+          <h4>${proker.judul}</h4>
+          <p>${proker.deskripsi}</p>
+          <div class="date-display">Akan dilaksanakan: ${tanggal.toLocaleDateString('id-ID')}</div>
+          <div class="countdown-display">${diffDays > 0 ? `${diffDays} hari lagi` : 'Sedang berlangsung'}</div>
+        `;
+        
+        prokerList.appendChild(prokerItem);
+      });
+    }
+    
+    // Load galeri
+    function loadGaleri() {
+      const galeri = JSON.parse(localStorage.getItem('galeri')) || [];
+      const galeriList = document.getElementById('galeriList');
+      
+      galeriList.innerHTML = '';
+      
+      if (galeri.length === 0) {
+        galeriList.innerHTML = '<div class="empty-state">Belum ada foto di galeri.</div>';
+        return;
+      }
+      
+      galeri.forEach(item => {
+        const tanggal = new Date(item.tanggal);
+        
+        const galeriItem = document.createElement('div');
+        galeriItem.className = 'galeri-item';
+        galeriItem.innerHTML = `
+          <button class="delete-btn" onclick="hapusGaleri(${item.id})">
+            <i class="fas fa-trash"></i> Hapus
+          </button>
+          <h4>${item.judul} (${item.kategori})</h4>
+          <img src="${item.gambar}" alt="${item.judul}" class="galeri-image">
+          <p>${item.deskripsi}</p>
+          <div class="date-display">Ditambahkan: ${tanggal.toLocaleDateString('id-ID')}</div>
+        `;
+        
+        galeriList.appendChild(galeriItem);
+      });
+    }
+    
+    // Show alert
+    function showAlert(type, message) {
+      const alert = document.getElementById(type + 'Alert');
+      alert.textContent = message;
+      alert.style.display = 'block';
+      
+      setTimeout(() => {
+        alert.style.display = 'none';
+      }, 3000);
+    }
+    
+    // Cek jika sudah login
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      document.getElementById('loginContainer').style.display = 'none';
+      document.getElementById('adminContainer').style.display = 'block';
+      loadData();
+    }
+  </script>
+</body>
+</html>
